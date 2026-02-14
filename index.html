@@ -402,6 +402,32 @@
             button {
                 width: 120px;
             }
+            /* Fix note overlay for mobile - make it larger and better positioned */
+            .note-overlay-content {
+                max-width: 85vw;
+                max-height: 75vh;
+            }
+
+            .note-overlay {
+                padding-top: 10px;
+                align-items: center;
+            }
+
+            .back-button {
+                width: 60px;
+                height: 60px;
+                top: 10px;
+                left: 10px;
+            }
+
+            /* Fix cat screen for mobile - reduce negative margins */
+            #screen3 {
+                padding-bottom: 150px !important;
+            }
+
+            #screen3 > div:last-child {
+                margin-top: -80px !important;
+            }
         }
     </style>
 </head>
