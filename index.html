@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Valentines Day</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 50%, #ffd4e5 100%);
+            background-image: url('assets/bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        .screen {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: #d63384;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: #c71f66;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            color: #8b2653;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .button-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        button {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+            width: 150px;
+        }
+
+        button img {
+            width: 100%;
+            height: auto;
+            display: block;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: high-quality;
+        }
+
+        .yes-btn {
+            position: absolute;
+            bottom: 18%;
+            left: 18%;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .yes-btn:hover {
+            transform: scale(1.1) translateY(0);
+        }
+
+        .no-btn {
+            position: absolute;
+            bottom: 18%;
+            right: 18%;
+            pointer-events: auto;
+            transform: translateY(5px);
+        }
+
+        .retry-btn, .next-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c71f66 100%);
+            color: white;
+        }
+
+        .retry-btn:hover, .next-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(199, 31, 102, 0.4);
+        }
+
+        .image-container {
+            margin: 30px 0;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Window container for buttons */
+        .window-container {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .window-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: high-quality;
+        }
+
+        /* Initial calendar image */
+        .calendar-container {
+            max-width: 200px;
+            margin: -50px auto 0 auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+        }
+
+        .calendar-container:hover {
+            transform: scale(1.02);
+        }
+
+        .calendar-container:active {
+            transform: scale(0.98);
+        }
+
+        .calendar-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: none;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: high-quality;
+        }
+
+        .start-app-overlay {
+            position: absolute;
+            bottom: 30px;
+            left: 15px;
+            width: 25%;
+            max-width: 40px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: high-quality;
+        }
+
+        /* Loading spinner */
+        .loading-screen {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(214, 51, 132, 0.2);
+            border-top: 6px solid #d63384;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 10px;
+            max-width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 30px;
+        }
+
+        .loading-text img {
+            width: 100%;
+            height: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: high-quality;
+        }
+
+        /* Placeholder for images */
+        .placeholder-img {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #ffe0f0 0%, #ffd4e5 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c71f66;
+            font-size: 1.2rem;
+            border: 3px dashed #ff6b9d;
+        }
+
+        /* Hearts animation */
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            animation: float 4s ease-in infinite;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Note styling */
+        .note-container {
+            background: #fff9e6;
+            border: 2px solid #d4a574;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .note-container:hover {
+            transform: scale(1.02);
+        }
+
+        .note-content {
+            display: none;
+            margin-top: 20px;
+            font-style: italic;
+            color: #5d4e37;
+            line-height: 1.8;
+        }
+
+        .note-content.visible {
+            display: block;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff6b9d;
+            position: absolute;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Heartbeat animation for red heart image */
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.1);
+            }
+            50% {
+                transform: scale(1);
+            }
+            75% {
+                transform: scale(1.15);
+            }
+        }
+
+        /* Letter note overlay */
+        .note-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+        }
+
+        .note-overlay.visible {
+            display: flex;
+        }
+
+        .note-overlay-content {
+            max-width: 40vw;
+            max-height: 50vh;
+            position: relative;
+        }
+
+        .note-overlay-content img {
+            width: 100%;
+            height: auto;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: high-quality;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 250px;
+            height: 250px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 2001;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+        }
+
+        .back-button img {
+            width: 100%;
+            height: auto;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: high-quality;
+        }
+
+        @media (max-width: 600px) {
+            button {
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hearts container for animation -->
+    <div class="hearts" id="hearts"></div>
+
+    <!-- Initial Screen: Calendar Image -->
+    <div class="screen active" id="screen0">
+        <div class="calendar-container" id="calendarContainer">
+            <img src="assets/calendar.png" alt="Calendar">
+            <img src="assets/start-app.jpeg" alt="Start App" class="start-app-overlay">
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div class="screen loading-screen" id="screenLoading">
+        <div class="spinner"></div>
+        <div class="loading-text">
+            <img src="assets/loading.png" alt="Loading">
+        </div>
+    </div>
+
+    <!-- Screen 1: Window with Buttons -->
+    <div class="screen" id="screen1">
+        <div class="window-container">
+            <img src="assets/window.png" alt="Application Window">
+            <div class="button-container" id="buttonContainer">
+                <button class="yes-btn" onclick="showYesScreen()">
+                    <img src="assets/yes.png" alt="Yes">
+                </button>
+                <button class="no-btn" id="noBtn">
+                    <img src="assets/no.png" alt="No">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 2: Yes Screen (Celebration) -->
+    <div class="screen" id="screen3" style="max-width: 100%; padding-bottom: 300px;">
+        <div style="max-width: 700px; margin: 0 auto;">
+            <img src="assets/thankyou.png" alt="Thank You" style="width: 100%; height: auto; box-shadow: none; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: high-quality;">
+        </div>
+        <div style="max-width: 350px; margin: -200px auto 0 auto;">
+            <img src="assets/cat.png" alt="Cat" style="width: 100%; height: auto; border-radius: 20px; box-shadow: none; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: high-quality;">
+        </div>
+    </div>
+
+    <!-- Screen 3.5: Click Here Screen -->
+    <div class="screen" id="screenClickHere" style="max-width: 100%; padding-top: 0px; margin-top: -300px;">
+        <div style="max-width: 600px; margin: 0 auto; margin-top: 100px">
+            <img src="assets/boo.png" alt="Boo" style="width: 100%; height: auto; box-shadow: none; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: high-quality;">
+        </div>
+        <div style="max-width: 400px; margin: -100px auto 0 auto; cursor: pointer; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" onclick="showDonutScreen()">
+            <img src="assets/gifts.png" alt="Gifts" style="width: 100%; height: auto; box-shadow: none; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: high-quality;">
+        </div>
+    </div>
+
+    <!-- Screen 3.6: Donut Screen -->
+    <div class="screen" id="screenDonut" style="max-width: none; width: 100vw; padding-top: 0px;">
+        <div id="threeImageLayout" style="display: flex; justify-content: center; align-items: center; gap: 20px; width: 95vw; margin: 0 auto;">
+            <div style="width: 13vw; flex-shrink: 0; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" onclick="animateDonut()">
+                <img id="donutImage" src="assets/donut1.png" alt="Donut" style="width: 100%; height: auto; box-shadow: none; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: high-quality;">
+            </div>
+            <div style="width: 20vw; flex-shrink: 0; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" onclick="animateFlower()">
+                <img id="flowerImage" src="assets/flower1.png" alt="Flower" style="width: 100%; height: auto; box-shadow: none; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: high-quality;">
+            </div>
+            <div style="width: 13vw; flex-shrink: 0; transition: transform 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" onclick="showNoteOverlay()">
+                <img src="assets/letter.png" alt="Letter" style="width: 100%; height: auto; box-shadow: none; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: high-quality;">
+            </div>
+        </div>
+        
+        <!-- Note Overlay -->
+        <div id="noteOverlay" class="note-overlay">
+            <div class="back-button" onclick="hideNoteOverlay()">
+                <img src="assets/back.png" alt="Back">
+            </div>
+            <div class="note-overlay-content">
+                <img src="assets/note.png" alt="Note">
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 4: Bouquet -->
+    <div class="screen" id="screen4">
+        <h2>Your Valentine's Day Gift 💐</h2>
+        <div class="image-container">
+            <!-- REPLACE THIS: Add your bouquet image here -->
+            <!-- <img src="bouquet.png" alt="Bouquet"> -->
+            <div class="placeholder-img">
+                💐<br>Your Bouquet<br>Image Here<br>(bouquet.png)
+            </div>
+        </div>
+        <div class="note-container" onclick="revealNote()">
+            <p style="margin: 0;">📜 Click the note to read my message</p>
+            <div class="note-content" id="noteContent">
+                <p>
+                    <!-- REPLACE THIS: Add your personalized message here -->
+                    My Dearest Valentine,
+                    <br><br>
+                    Every moment with you feels like a beautiful dream. You make my world brighter, my days sweeter, and my heart fuller. Thank you for being the most amazing person in my life.
+                    <br><br>
+                    I'm so grateful to call you mine. Happy Valentine's Day, my love! 💕
+                    <br><br>
+                    Forever yours,<br>
+                    [Your Name]
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Calendar double-click functionality
+        const calendarContainer = document.getElementById('calendarContainer');
+        calendarContainer.addEventListener('dblclick', showLoadingScreen);
+
+        // No button escape functionality
+        const noBtn = document.getElementById('noBtn');
+        const buttonContainer = document.getElementById('buttonContainer');
+        let noBtnAttempts = 0;
+
+        noBtn.addEventListener('mouseenter', moveNoButton);
+        noBtn.addEventListener('touchstart', moveNoButton);
+
+        function moveNoButton(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            noBtnAttempts++;
+            
+            // Get window container dimensions
+            const windowContainer = document.querySelector('.window-container');
+            const windowRect = windowContainer.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            // Calculate current position relative to window container
+            let currentLeft, currentTop;
+            if (noBtnAttempts === 1) {
+                // First time - get position relative to window container
+                currentLeft = btnRect.left - windowRect.left;
+                currentTop = btnRect.top - windowRect.top;
+            } else {
+                // Already moving - use stored position
+                currentLeft = parseFloat(noBtn.style.left) || 0;
+                currentTop = parseFloat(noBtn.style.top) || 0;
+            }
+            
+            // Minimum movement distance in pixels
+            const minDistance = 120;
+            
+            let randomX, randomY, distance;
+            let attempts = 0;
+            
+            // Keep trying until we find a position at least minDistance away
+            // Position anywhere within the window image bounds (relative to container)
+            // Ensure vertical movement can go upward (randomY can be less than currentTop)
+            do {
+                randomX = Math.random() * (windowRect.width - btnRect.width - 40) + 20;
+                // Allow full vertical range from top to bottom of window
+                randomY = Math.random() * (windowRect.height - btnRect.height - 40) + 20;
+                
+                // Calculate distance from current position
+                const dx = randomX - currentLeft;
+                const dy = randomY - currentTop;
+                distance = Math.sqrt(dx * dx + dy * dy);
+                
+                attempts++;
+            } while (distance < minDistance && attempts < 50);
+            
+            // Set position relative to window container
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            noBtn.style.bottom = 'auto';
+            noBtn.style.right = 'auto';
+        }
+
+        // Loading screen function
+        function showLoadingScreen() {
+            showScreen('screenLoading');
+            setTimeout(() => {
+                showScreen('screen1');
+            }, 3000); // 3 seconds delay
+        }
+
+        // Screen navigation
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            
+            // Reset no button attempts when going back to screen 1
+            if (screenId === 'screen1') {
+                noBtnAttempts = 0;
+                noBtn.style.left = '';
+                noBtn.style.top = '';
+                noBtn.style.bottom = '18%';
+                noBtn.style.right = '18%';
+            }
+        }
+
+        function showYesScreen() {
+            showScreen('screen3');
+            createHearts();
+            createConfetti();
+            // After 5 seconds, show click-here screen
+            setTimeout(() => {
+                showScreen('screenClickHere');
+            }, 5000); // 5 seconds delay
+        }
+
+        function showDonutScreen() {
+            showScreen('screenDonut');
+        }
+
+        // Hearts animation
+        function createHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            const heartSymbols = ['❤️', '💕', '💖', '💗', '💝'];
+            
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.animationDelay = Math.random() * 2 + 's';
+                    heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                    heartsContainer.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 4000);
+                }, i * 100);
+            }
+        }
+
+        // Confetti animation
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#c71f66', '#ffd4e5', '#ffb3d1', '#ff1493'];
+            const confettiContainer = document.getElementById('hearts');
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    confettiContainer.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        // Note reveal
+        function revealNote() {
+            const noteContent = document.getElementById('noteContent');
+            noteContent.classList.add('visible');
+        }
+
+        // Donut animation sequence
+        function animateDonut() {
+            const donutImg = document.getElementById('donutImage');
+            
+            // Immediately show donut2.png
+            donutImg.src = 'assets/donut2.png';
+            
+            // After 0.5 seconds, show donut3.png
+            setTimeout(() => {
+                donutImg.src = 'assets/donut3.png';
+            }, 500);
+            
+            // After 1 second (0.5s + 0.5s), show donut4.png
+            setTimeout(() => {
+                donutImg.src = 'assets/donut4.png';
+            }, 1000);
+            
+            // After 1.5 seconds (0.5s + 0.5s + 0.5s), show donut5.png
+            setTimeout(() => {
+                donutImg.src = 'assets/donut5.png';
+            }, 1500);
+            
+            // After 2 seconds (0.5s + 0.5s + 0.5s + 0.5s), return to donut1.png
+            setTimeout(() => {
+                donutImg.src = 'assets/donut1.png';
+            }, 2000);
+        }
+
+        // Flower animation sequence (reverse order)
+        function animateFlower() {
+            const flowerImg = document.getElementById('flowerImage');
+            
+            // Immediately show flower5.png
+            flowerImg.src = 'assets/flower5.png';
+            
+            // After 0.5 seconds, show flower4.png
+            setTimeout(() => {
+                flowerImg.src = 'assets/flower4.png';
+            }, 500);
+            
+            // After 1 second (0.5s + 0.5s), show flower3.png
+            setTimeout(() => {
+                flowerImg.src = 'assets/flower3.png';
+            }, 1000);
+            
+            // After 1.5 seconds (0.5s + 0.5s + 0.5s), show flower2.png
+            setTimeout(() => {
+                flowerImg.src = 'assets/flower2.png';
+            }, 1500);
+            
+            // After 2 seconds (0.5s + 0.5s + 0.5s + 0.5s), return to flower1.png
+            setTimeout(() => {
+                flowerImg.src = 'assets/flower1.png';
+            }, 2000);
+        }
+
+        // Note overlay functions
+        function showNoteOverlay() {
+            const overlay = document.getElementById('noteOverlay');
+            overlay.classList.add('visible');
+        }
+
+        function hideNoteOverlay() {
+            const overlay = document.getElementById('noteOverlay');
+            overlay.classList.remove('visible');
+        }
+    </script>
+</body>
+</html>
